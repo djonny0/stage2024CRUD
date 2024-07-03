@@ -18,16 +18,16 @@ class AuthController extends Controller
     public function registeruser(Request $request)
     {
         $credentials = $request->validate([
-            'nom'=>'string|required|min:3',
-            'email'=>'required|email|unique:users,email',
-            'password'=>'required|min:6|confirmed',
-            'password_confirmation'=>'required|min:6'
+            'nom' => 'string|required|min:3',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:6|confirmed',
+            'password_confirmation' => 'required|min:6'
         ]);
 
         User::Create([
-            'name'=>$request->input('nom'),
-            'email'=>$request->input('email'),
-            'password'=>bcrypt($request->input('password')),
+            'name' => $request->input('nom'),
+            'email' => $request->input('email'),
+            'password' => bcrypt($request->input('password')),
         ]);
     }
 
@@ -41,15 +41,14 @@ class AuthController extends Controller
     public function loginuser(Request $request)
     {
         $credentials = $request->validate([
-            'email'=>'required|min:3',
-            'password'=>'required|min:6'
+            'email' => 'required|min:3',
+            'password' => 'required|min:6'
         ]);
 
-        if(Auth::attempt($credentials))
-        {
+        if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
             return redirect()->intended()->with('Authentification reussie');
-        } else{
+        } else {
             return back()->withErrors('email', ('Informations de connexion incorectes'));
         }
     }
@@ -57,10 +56,10 @@ class AuthController extends Controller
     //fonction permettant la déconnexion
     public function logout(Request $request)
     {
-        Auth::logout();
+        Auth::logout(); //déconnexion de l'utilisateur courant
+        $request->session()->invalidate(); //Invalide les données de la session
+        $request->session()->regenerateToken(); //Regénération du jeton CSRFutilisé pour protéger l'app contre les attaques de type CSRF
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
         return view('auth.login');
     }
 }

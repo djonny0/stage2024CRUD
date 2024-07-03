@@ -15,37 +15,38 @@ class ProduitController extends Controller
     }
 
     //fonction permettant de traiter le formulaire de produit
-    function form_prod_traitement(Request $request){
+    function form_prod_traitement(Request $request)
+    {
 
         $credentials = $request->validate([
-        'nom' => 'required|string|min:4',
-        'prix' => 'required|string|min:4',
-        'categorie' => 'required',
+            'nom' => 'required|string|min:4',
+            'prix' => 'required|string|min:4',
+            'categorie' => 'required',
 
-    ]);
+        ]);
 
         Produit::Create([
-        'nom_produits' => $request->nom,
-        'prix' => $request->prix,
-        'categorie_id' => $request->categorie
+            'nom_produits' => $request->nom,
+            'prix' => $request->prix,
+            'categorie_id' => $request->categorie
         ]);
 
         return redirect()->route('accueil')->with('succès', 'Le produit a été ajoutée avec succès');
-}
-        //function qui permet d'afficher le formulaire de modification de produit
-        function modifier_produit($id)
-        {
+    }
+    //function qui permet d'afficher le formulaire de modification de produit
+    function modifier_produit($id)
+    {
 
-            //dd($id);
+        //dd($id);
 
-            $produit = Produit::where('id',$id)->with('categorie')->first();
+        $produit = Produit::where('id', $id)->with('categorie')->first();
 
-            $categories = Categorie::all();
+        $categories = Categorie::all();
 
-            return view('modifier_produit',compact(['produit', 'categories']));
-        }
+        return view('modifier_produit', compact(['produit', 'categories']));
+    }
 
-        //fonction permettant de mettre un prduit
+    //fonction permettant de mettre un prduit
     public function update_produit(Request $request, $id)
     {
         // Valider les données du formulaire
@@ -75,5 +76,13 @@ class ProduitController extends Controller
     {
         Produit::findOrFail($id)->delete();
         return redirect()->route('accueil')->with('suppression', 'La suppression du prouit a été un succès');
+    }
+    //fonction permettant de voir le produit
+    public function view_product($id)
+    {
+        $produit = Produit::where('id', $id)->with('categorie')->first();
+        $categories = Categorie::all();
+
+        return view('viewProduct', compact(['produit', 'categories']));
     }
 }

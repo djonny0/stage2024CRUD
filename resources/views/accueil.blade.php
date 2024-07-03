@@ -19,17 +19,24 @@
         <div class="col d-flex">
             <div><a href="{{ route('formcategorie') }}"><button type="button"
                         class="btn btn-primary">Catégorie</button></a></div>
-            <div class="mx-3"><a href="{{ route('form_prod') }}"><button type="button" class="btn btn-success">Produit</button></a>
-            </div>
+            @can('access-admin')
+                <div class="mx-3"><a href="{{ route('form_prod') }}"><button type="button"
+                            class="btn btn-success">Produit</button></a>
+                </div>
+            @endcan
         </div>
         @if (Auth::check())
-            <div class="col offset-8">
-                <form method="post" action="{{route('logout')}}">
+            <div class="col offset-8 d-flex g-3">
+                <form method="post" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="btn btn-danger">Déconnexion</button>
                 </form>
+                <div class="">{{ Auth::user()->name }}</div>
             </div>
-
+        @else
+            <div class="col offset-8">
+                <a href="{{ route('showlogin') }}"><button type="submit" class="btn btn-warning">Connexion</button></a>
+            </div>
         @endif
 
     </div>
@@ -45,8 +52,9 @@
                 <th scope="col">#</th>
                 <th scope="col">Nom catégorie</th>
                 <th scope="col">Les produits de la catégorie</th>
-
-                <th scope="col">Actions</th>
+                @if (Auth::user() && Auth::user()->role == 'admin')
+                    <th scope="col">Actions</th>
+                @endif
             </tr>
         </thead>
         <tbody>
@@ -60,12 +68,13 @@
                             {{ $produit->nom_produits }}
                         @endforeach
                     </td>
-
-                    <td scope="row"><a href="{{ route('modifier_categorie', $categories->id) }}"><button
-                                type="button" class="btn btn-primary ">Modifier</button></a>
-                        <a href="{{ route('delete_categorie', $categories->id) }}"><button type="button"
-                                class="btn btn-danger ml-3">Suprimer</button></a>
-                    </td>
+                    @if (Auth::user() && Auth::user()->role == 'admin')
+                        <td scope="row"><a href="{{ route('modifier_categorie', $categories->id) }}"><button
+                                    type="button" class="btn btn-primary ">Modifier</button></a>
+                            <a href="{{ route('delete_categorie', $categories->id) }}"><button type="button"
+                                    class="btn btn-danger ml-3">Supprimer</button></a>
+                        </td>
+                    @endif
                 </tr>
             @endforeach
         </tbody>
@@ -96,7 +105,8 @@
                     <td scope="row"><a href="{{ route('modifier_produit', $produit->id) }}"><button type="button"
                                 class="btn btn-primary ">Modifier</button></a>
                         <a href="{{ route('delete_produit', $categories->id) }}"><button type="button"
-                                class="btn btn-danger ml-3">Suprimer</button></a>
+                                class="btn btn-danger ml-3">Supprimer</button></a>
+                        <a href="{{ route('view_product', $produit->id) }}"><button type="button" class="btn btn-info">Voir</button></a>
                     </td>
                 </tr>
             @endforeach

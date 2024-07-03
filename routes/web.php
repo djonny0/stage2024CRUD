@@ -17,13 +17,11 @@ use Illuminate\Routing\Route as RoutingRoute;
 |
 */
 
-Route::get('/',  [CategorieController::class, 'accueil'])->name('accueil')->middleware('auth');
+Route::get('/',  [CategorieController::class, 'accueil'])->name('accueil');
 
 //CATEGORIE
 //route permettant d'accéder au formulaire de catégorie
-Route::get('form_categ', function () {
-    return view('formcategorie');
-})->name('formcategorie')->middleware('auth');
+Route::get('form_categ', [CategorieController::class, 'form_categ'])->name('formcategorie')->middleware('auth');
 //route permettant de traiter le formulaire de catégorie
 Route::post('form_categ_traitement', [CategorieController::class, 'form_categ_traitement'])->name('form_categ_traitement')->middleware('auth');
 //route permettant d'afficher le formulaire de modification de categorie
@@ -46,6 +44,9 @@ Route::get('modifier/produit/{id}', [ProduitController::class, 'modifier_produit
 Route::post('update/produit/{id}', [ProduitController::class, 'update_produit'])->name('update_produit')->middleware('auth');
 //route permettant de supprimer la catégorie
 Route::get('delete/produit/{id}',  [ProduitController::class, 'delete_produit'])->name('delete_produit')->middleware('auth');
+//route permettant de voir le produit
+Route::get('view/product/{id}',  [ProduitController::class, 'view_product'])->name('view_product')->middleware(['admin']);
+
 
 //REGISTER
 //route permettant d'afficher le formulaire d'inscription
@@ -58,3 +59,8 @@ Route::get('showlogin', [AuthController::class, 'showlogin'])->name('showlogin')
 Route::post('loginuser', [AuthController::class, 'loginuser'])->name('loginuser');
 //route permettant la déconnexion
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+
+//Une manière de regrouper les routes protégées
+// Route::group(['middleware' => ['auth']], function () {
+    // Vos routes protégées ici
+// });
